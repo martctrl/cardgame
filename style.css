@@ -8,6 +8,9 @@
   --ink-dim: #a89bc9;
   --card-back-1: #ff5f7e;
   --card-back-2: #6a4c93;
+  --p1: #ff5f7e;
+  --p2: #5ec8d8;
+  --gold: #ffd166;
 }
 
 *{ box-sizing:border-box; }
@@ -65,6 +68,38 @@ h1{
   font-weight:600;
 }
 
+.turn-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 14px;
+  border-radius:999px;
+  font-family:'Fredoka', system-ui, sans-serif;
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:10px;
+  border:1px solid var(--panel-edge);
+  background:var(--panel);
+}
+.turn-badge .dot{ width:9px; height:9px; border-radius:50%; }
+
+.opponent-panel{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:13px;
+  color:var(--ink-dim);
+  margin:0 0 16px 10px;
+  border:1px solid var(--panel-edge);
+  background:#15101f;
+}
+.opponent-panel .dot{ width:8px; height:8px; border-radius:50%; }
+.opponent-panel #oppNameLabel{ font-weight:600; color:var(--ink); }
+.opponent-panel .opp-figures b{ color:var(--ink); font-weight:600; }
+.opponent-panel .opp-figures{ margin-left:4px; }
+
 .board{
   display:grid;
   grid-template-columns:repeat(4, 1fr);
@@ -85,9 +120,7 @@ h1{
 }
 
 .card.flipped, .card.matched{ transform:rotateY(180deg); }
-
-.card.matched .face.front{ box-shadow:0 0 0 2px #ffd166; }
-
+.card.matched .face.front{ box-shadow:0 0 0 2px var(--gold); }
 .card.matched{ cursor:default; }
 
 .face{
@@ -104,7 +137,6 @@ h1{
   background:linear-gradient(155deg, var(--card-back-1), var(--card-back-2));
   background-color:var(--panel);
 }
-
 .face.back::after{
   content:"";
   width:46%;
@@ -133,6 +165,7 @@ h1{
   font-weight:600;
   font-size:clamp(14px, 3.4vw, 20px);
   color:rgba(0,0,0,0.55);
+  overflow:hidden;
 }
 
 .avatar img{
@@ -142,20 +175,15 @@ h1{
   border-radius:50%;
 }
 
-.flabel{
-  font-size:clamp(9px, 2vw, 11px);
-  color:var(--ink-dim);
-  text-align:center;
-  line-height:1.2;
-}
-
 .controls{
   display:flex;
   justify-content:center;
+  gap:12px;
   margin-top:26px;
+  flex-wrap:wrap;
 }
 
-button.reset{
+button.reset, button.primary{
   font-family:'Inter', system-ui, sans-serif;
   font-weight:600;
   font-size:14px;
@@ -165,10 +193,18 @@ button.reset{
   padding:11px 22px;
   border-radius:999px;
   cursor:pointer;
-  transition:border-color .2s ease, transform .2s ease;
+  transition:border-color .2s ease, transform .2s ease, background .2s ease;
 }
 button.reset:hover{ border-color:var(--card-back-1); transform:translateY(-1px); }
-button.reset:focus-visible, .card:focus-visible{ outline:2px solid #ffd166; outline-offset:2px; }
+button.reset:focus-visible, .card:focus-visible, input:focus-visible, .mode-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
+button.primary{
+  background:linear-gradient(100deg, var(--card-back-1), var(--card-back-2));
+  border:none;
+  color:#1a1424;
+}
+button.primary:hover{ transform:translateY(-1px); }
+button.primary:disabled{ opacity:0.45; cursor:not-allowed; transform:none; }
 
 .note{
   text-align:center;
@@ -178,6 +214,91 @@ button.reset:focus-visible, .card:focus-visible{ outline:2px solid #ffd166; outl
   line-height:1.5;
 }
 
+.screen{ display:none; }
+.screen.active{ display:block; }
+
+/* Setup screen */
+.setup-card{
+  background:var(--panel);
+  border:1px solid var(--panel-edge);
+  border-radius:20px;
+  padding:32px 28px;
+}
+.setup-card p.lead{ color:var(--ink-dim); margin:0 0 24px; font-size:14px; }
+.name-field{ margin-bottom:18px; }
+.name-field label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-family:'Fredoka', system-ui, sans-serif;
+  font-size:14px;
+  margin-bottom:8px;
+}
+.name-field input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid var(--panel-edge);
+  background:#15101f;
+  color:var(--ink);
+  font-size:15px;
+  font-family:'Inter', system-ui, sans-serif;
+}
+.name-field input::placeholder{ color:#5c527a; }
+
+.mode-toggle{
+  display:flex;
+  gap:8px;
+  margin-bottom:20px;
+  background:#15101f;
+  padding:4px;
+  border-radius:999px;
+  border:1px solid var(--panel-edge);
+}
+.mode-btn{
+  flex:1;
+  border:none;
+  background:transparent;
+  color:var(--ink-dim);
+  font-family:'Inter', system-ui, sans-serif;
+  font-weight:600;
+  font-size:13px;
+  padding:9px 10px;
+  border-radius:999px;
+  cursor:pointer;
+}
+.mode-btn.active{
+  background:linear-gradient(100deg, var(--card-back-1), var(--card-back-2));
+  color:#1a1424;
+}
+
+.room-code-display{
+  font-family:'Fredoka', system-ui, sans-serif;
+  font-size:36px;
+  font-weight:600;
+  letter-spacing:6px;
+  color:var(--gold);
+}
+
+.spinner{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  border:3px solid var(--panel-edge);
+  border-top-color:var(--card-back-1);
+  animation:spin 0.9s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+.countdown-num{
+  font-family:'Fredoka', system-ui, sans-serif;
+  font-size:56px;
+  font-weight:700;
+  color:var(--gold);
+  margin-top:6px;
+}
+
+/* Overlays */
 .overlay{
   position:fixed;
   inset:0;
@@ -188,7 +309,6 @@ button.reset:focus-visible, .card:focus-visible{ outline:2px solid #ffd166; outl
   padding:20px;
   z-index:10;
 }
-
 .overlay.show{ display:flex; }
 
 .win-card{
@@ -197,23 +317,40 @@ button.reset:focus-visible, .card:focus-visible{ outline:2px solid #ffd166; outl
   border-radius:20px;
   padding:36px 32px;
   text-align:center;
-  max-width:320px;
+  max-width:360px;
+  width:100%;
   animation:pop .5s cubic-bezier(.2,.9,.3,1);
 }
-
 @keyframes pop{
   from{ transform:scale(0.85); opacity:0; }
   to{ transform:scale(1); opacity:1; }
 }
-
 .win-card h2{
   font-family:'Fredoka', system-ui, sans-serif;
   margin:0 0 6px;
   font-size:24px;
 }
-
 .win-card p{ color:var(--ink-dim); margin:0 0 20px; font-size:14px; }
+
+.result-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 16px;
+  border-radius:12px;
+  background:#15101f;
+  border:1px solid var(--panel-edge);
+  margin-bottom:10px;
+  text-align:left;
+}
+.result-row.winner{ border-color:var(--gold); box-shadow:0 0 0 1px var(--gold) inset; }
+.result-row .who{ display:flex; align-items:center; gap:10px; font-family:'Fredoka', system-ui, sans-serif; font-weight:600; }
+.result-row .who .dot{ width:11px; height:11px; border-radius:50%; }
+.result-row .figures{ display:flex; gap:16px; font-size:13px; color:var(--ink-dim); }
+.result-row .figures b{ color:var(--ink); font-weight:600; }
+.crown{ font-size:14px; }
 
 @media (prefers-reduced-motion: reduce){
   .card, .win-card{ transition:none; animation:none; }
+  .spinner{ animation:none; }
 }
