@@ -3,35 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Match the COF</title>
+<title>Match the COF — Live 1v1</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="wrap">
+
   <div class="topbar">
     <h1>Match the COF</h1>
-    <div class="stats">
+    <div class="stats" id="liveStats" style="display:none;">
       <div>Moves<b id="moves">0</b></div>
       <div>Time<b id="timer">0:00</b></div>
     </div>
   </div>
 
-  <div class="board" id="board" role="grid" aria-label="Memory match board"></div>
+  <!-- SETUP SCREEN -->
+  <div class="screen active" id="screen-setup">
+    <div class="setup-card">
+      <p class="lead">Live 1v1: both of you play on your own devices at the same time. One person hosts and shares a room code, the other joins with it.</p>
 
-  <div class="controls">
-    <button class="reset" id="resetBtn">Shuffle & restart</button>
+      <div class="name-field">
+        <label>Your name</label>
+        <input type="text" id="myName" placeholder="Your name" maxlength="16">
+      </div>
+
+      <div class="mode-toggle" id="modeToggle">
+        <button class="mode-btn active" data-mode="host" type="button">Host a game</button>
+        <button class="mode-btn" data-mode="join" type="button">Join a game</button>
+      </div>
+
+      <div id="hostPane">
+        <p class="note" style="margin:0 0 16px;">We'll generate a room code for you to send your opponent (text, chat, whatever works).</p>
+        <div class="controls" style="margin-top:0;">
+          <button class="primary" id="createBtn">Create room</button>
+        </div>
+      </div>
+
+      <div id="joinPane" style="display:none;">
+        <div class="name-field">
+          <label>Room code</label>
+          <input type="text" id="roomCodeInput" placeholder="e.g. F7QX2" maxlength="8" style="text-transform:uppercase; letter-spacing:2px;">
+        </div>
+        <div class="controls" style="margin-top:0;">
+          <button class="primary" id="joinBtn">Join room</button>
+        </div>
+      </div>
+
+      <p class="note" id="setupError" style="color:#ff8fa3; display:none; margin-top:14px;"></p>
+    </div>
   </div>
 
+  <!-- WAITING / CONNECTING SCREEN -->
+  <div class="screen" id="screen-waiting">
+    <div class="setup-card" style="text-align:center;">
+      <div id="roomCodeBlock" style="display:none;">
+        <p class="note" style="margin-bottom:8px;">Share this code with your opponent</p>
+        <div class="room-code-display" id="roomCodeDisplay">—</div>
+        <button class="reset" id="copyCodeBtn" style="margin-top:14px;">Copy code</button>
+      </div>
+      <div class="spinner" id="waitSpinner" style="margin:26px auto 18px;"></div>
+      <p id="waitStatus" style="font-family:'Fredoka', system-ui, sans-serif; font-size:16px; margin:0;">Waiting for opponent to join…</p>
+      <button class="reset" id="cancelWaitBtn" style="margin-top:22px;">Cancel</button>
+    </div>
+  </div>
 
-<div class="overlay" id="overlay">
+  <!-- PLAY SCREEN -->
+  <div class="screen" id="screen-play">
+    <div class="turn-badge" id="turnBadge">
+      <span class="dot" style="background:var(--p1)"></span><span id="turnLabel">Your board</span>
+    </div>
+    <div class="opponent-panel" id="opponentPanel">
+      <span class="dot" style="background:var(--p2)"></span>
+      <span id="oppNameLabel">Opponent</span>
+      <span class="opp-figures">pairs <b id="oppPairs">0</b> · moves <b id="oppMoves">0</b></span>
+    </div>
+    <div class="board" id="board" role="grid" aria-label="Memory match board"></div>
+    <div class="note">Find every matching pair. First to finish waits for the other — winner is decided by fewest moves, ties broken by time.</div>
+  </div>
+
+</div>
+
+<!-- COUNTDOWN OVERLAY -->
+<div class="overlay" id="countdownOverlay">
   <div class="win-card">
-    <h2>Nice memory! 🎉</h2>
-    <p id="winStats">Solved in — moves, — time</p>
-    <button class="reset" id="playAgainBtn">Play again</button>
+    <h2>Opponent connected!</h2>
+    <p>Get ready…</p>
+    <div class="countdown-num" id="countdownNum">3</div>
   </div>
 </div>
 
-<script src="script.js"></script>
+<!-- WAITING-FOR-OPPONENT-TO-FINISH OVERLAY -->
+<div class="overlay" id="finishWaitOverlay">
+  <div class="win-card">
+    <h2>Nice! You're done 🎉</h2>
+    <p id="myFinishStats">Solved in — moves, — time</p>
+    <div class="spinner" style="margin:8px auto 18px;"></div>
+    <p class="note" id="finishWaitStatus">Waiting for <span id="oppWaitName">your opponent</span> to finish…</p>
+  </div>
+</div>
+
+<!-- RESULTS OVERLAY -->
+<div class="overlay" id="resultsOverlay">
+  <div class="win-card" style="max-width:420px;">
+    <h2>Game over!</h2>
+    <p id="winnerLine">—</p>
+    <div id="resultsRows"></div>
+    <p class="note" id="rematchStatus" style="display:none;"></p>
+    <div class="controls">
+      <button class="reset" id="leaveRoomBtn">Leave room</button>
+      <button class="primary" id="rematchBtn">Rematch</button>
+    </div>
+  </div>
+</div>
+
+<!-- DISCONNECT OVERLAY -->
+<div class="overlay" id="disconnectOverlay">
+  <div class="win-card">
+    <h2>Opponent left</h2>
+    <p>They disconnected from the room.</p>
+    <div class="controls">
+      <button class="primary" id="disconnectOkBtn">Back to start</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="script.js"></script>
 </body>
 </html>
