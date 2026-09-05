@@ -1,0 +1,219 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --bg: #15111f;
+  --panel: #1e1830;
+  --panel-edge: #2a2245;
+  --ink: #f2eefc;
+  --ink-dim: #a89bc9;
+  --card-back-1: #ff5f7e;
+  --card-back-2: #6a4c93;
+}
+
+*{ box-sizing:border-box; }
+
+html,body{
+  margin:0;
+  min-height:100%;
+  background:
+    radial-gradient(circle at 15% -10%, rgba(255,95,126,0.16), transparent 45%),
+    radial-gradient(circle at 90% 110%, rgba(106,76,147,0.22), transparent 50%),
+    var(--bg);
+  color:var(--ink);
+  font-family:'Inter', system-ui, sans-serif;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:32px 16px 60px;
+}
+
+.wrap{ width:100%; max-width:720px; }
+
+.topbar{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:22px;
+}
+
+h1{
+  font-family:'Fredoka', system-ui, sans-serif;
+  font-weight:600;
+  font-size:clamp(28px, 5vw, 38px);
+  margin:0;
+  letter-spacing:-0.01em;
+  background:linear-gradient(100deg, var(--card-back-1), var(--card-back-2));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+.stats{
+  display:flex;
+  gap:18px;
+  font-size:14px;
+  color:var(--ink-dim);
+}
+
+.stats b{
+  display:block;
+  font-family:'Fredoka', system-ui, sans-serif;
+  font-size:20px;
+  color:var(--ink);
+  font-weight:600;
+}
+
+.board{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:10px;
+  perspective:1000px;
+}
+
+@media (min-width:480px){
+  .board{ grid-template-columns:repeat(6, 1fr); }
+}
+
+.card{
+  aspect-ratio:3/4;
+  cursor:pointer;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform 0.45s cubic-bezier(.2,.8,.3,1);
+}
+
+.card.flipped, .card.matched{ transform:rotateY(180deg); }
+
+.card.matched .face.front{ box-shadow:0 0 0 2px #ffd166; }
+
+.card.matched{ cursor:default; }
+
+.face{
+  position:absolute;
+  inset:0;
+  border-radius:14px;
+  backface-visibility:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.face.back{
+  background:linear-gradient(155deg, var(--card-back-1), var(--card-back-2));
+  background-color:var(--panel);
+}
+
+.face.back::after{
+  content:"";
+  width:46%;
+  height:46%;
+  border-radius:50%;
+  border:2.5px solid rgba(255,255,255,0.55);
+}
+
+.face.front{
+  background:var(--panel);
+  border:1px solid var(--panel-edge);
+  transform:rotateY(180deg);
+  flex-direction:column;
+  gap:6px;
+  padding:6px;
+}
+
+.avatar{
+  width:56%;
+  aspect-ratio:1;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Fredoka', system-ui, sans-serif;
+  font-weight:600;
+  font-size:clamp(14px, 3.4vw, 20px);
+  color:rgba(0,0,0,0.55);
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+}
+
+.flabel{
+  font-size:clamp(9px, 2vw, 11px);
+  color:var(--ink-dim);
+  text-align:center;
+  line-height:1.2;
+}
+
+.controls{
+  display:flex;
+  justify-content:center;
+  margin-top:26px;
+}
+
+button.reset{
+  font-family:'Inter', system-ui, sans-serif;
+  font-weight:600;
+  font-size:14px;
+  color:var(--ink);
+  background:var(--panel);
+  border:1px solid var(--panel-edge);
+  padding:11px 22px;
+  border-radius:999px;
+  cursor:pointer;
+  transition:border-color .2s ease, transform .2s ease;
+}
+button.reset:hover{ border-color:var(--card-back-1); transform:translateY(-1px); }
+button.reset:focus-visible, .card:focus-visible{ outline:2px solid #ffd166; outline-offset:2px; }
+
+.note{
+  text-align:center;
+  color:var(--ink-dim);
+  font-size:12.5px;
+  margin-top:16px;
+  line-height:1.5;
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(10,8,18,0.72);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:10;
+}
+
+.overlay.show{ display:flex; }
+
+.win-card{
+  background:var(--panel);
+  border:1px solid var(--panel-edge);
+  border-radius:20px;
+  padding:36px 32px;
+  text-align:center;
+  max-width:320px;
+  animation:pop .5s cubic-bezier(.2,.9,.3,1);
+}
+
+@keyframes pop{
+  from{ transform:scale(0.85); opacity:0; }
+  to{ transform:scale(1); opacity:1; }
+}
+
+.win-card h2{
+  font-family:'Fredoka', system-ui, sans-serif;
+  margin:0 0 6px;
+  font-size:24px;
+}
+
+.win-card p{ color:var(--ink-dim); margin:0 0 20px; font-size:14px; }
+
+@media (prefers-reduced-motion: reduce){
+  .card, .win-card{ transition:none; animation:none; }
+}

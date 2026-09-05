@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Match the Crew</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <div class="topbar">
+    <h1>Match the COF</h1>
+    <div class="stats">
+      <div>Moves<b id="moves">0</b></div>
+      <div>Time<b id="timer">0:00</b></div>
+    </div>
+  </div>
+
+  <div class="board" id="board" role="grid" aria-label="Memory match board"></div>
+
+  <div class="controls">
+    <button class="reset" id="resetBtn">Shuffle & restart</button>
+  </div>
+
+
+<div class="overlay" id="overlay">
+  <div class="win-card">
+    <h2>Nice memory! 🎉</h2>
+    <p id="winStats">Solved in — moves, — time</p>
+    <button class="reset" id="playAgainBtn">Play again</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
